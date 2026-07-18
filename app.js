@@ -619,7 +619,8 @@ function downloadFile(file) {
 }
 
 async function shareSavedAnswers(clickedButton) {
-  const isCompleteScreen = !elements.completeScreen.classList.contains("hidden");
+  const isCompleteScreen =
+    !elements.completeScreen.classList.contains("hidden");
 
   const statusTarget = isCompleteScreen
     ? elements.shareStatus
@@ -638,7 +639,10 @@ async function shareSavedAnswers(clickedButton) {
 
     saveState();
 
+    // Сначала создаём файл с ответами
     state.responseFile = await buildResponseFile();
+
+    button.textContent = "Готово! Отправляю… 💌";
 
     const shareData = {
       files: [state.responseFile],
@@ -646,36 +650,53 @@ async function shareSavedAnswers(clickedButton) {
       text: "Я ответила на наши вопросы ♥"
     };
 
+    let sharedSuccessfully = false;
+
+    // Пробуем открыть системное меню отправки
     if (
       navigator.share &&
       navigator.canShare &&
       navigator.canShare(shareData)
     ) {
-      await navigator.share(shareData);
+      try {
+        await navigator.share(shareData);
 
-      statusTarget.textContent =
-        "Ответы отправлены через выбранное приложение ♥";
-    } else {
+        sharedSuccessfully = true;
+
+        statusTarget.textContent =
+          "Ответы отправлены через выбранное приложение ♥";
+      } catch (shareError) {
+        console.warn(
+          "Системная отправка недоступна, скачиваю файл:",
+          shareError
+        );
+
+        // Если пользователь сам закрыл меню отправки
+        if (shareError?.name === "AbortError") {
+          statusTarget.textContent =
+            "Отправка отменена. Сейчас файл будет скачан на устройство.";
+        }
+      }
+    }
+
+    // Если системная отправка не сработала — скачиваем файл
+    if (!sharedSuccessfully) {
       downloadFile(state.responseFile);
 
       statusTarget.textContent =
-        "Файл с ответами скачан. Теперь отправь его Бекназару через Telegram или WhatsApp ♥";
+        "Файл с ответами скачан ♥ Отправь его Бекназару через Telegram или WhatsApp.";
     }
   } catch (error) {
-    console.error("Ошибка отправки ответов:", error);
+    console.error("Ошибка создания файла с ответами:", error);
 
-    if (error?.name === "AbortError") {
-      statusTarget.textContent =
-        "Отправка отменена. Ответы сохранены, можно попробовать ещё раз.";
-    } else {
-      statusTarget.textContent =
-        `Не удалось создать файл: ${error?.message || "неизвестная ошибка"}`;
-    }
+    statusTarget.textContent =
+      `Не удалось собрать ответы: ${error?.message || "неизвестная ошибка"}`;
   } finally {
     button.disabled = false;
     button.textContent = originalButtonText;
   }
 }
+
 function resetProgress() {
   const approved = window.confirm("Сбросить все сохранённые ответы и прогресс на этом устройстве?");
   if (!approved) return;
