@@ -618,38 +618,64 @@ function downloadFile(file) {
   window.setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-async function shareSavedAnswers() {
-  const previousScreen = [elements.homeScreen, elements.completeScreen].find((screen) => !screen.classList.contains("hidden")) || elements.homeScreen;
-  const statusTarget = previousScreen === elements.homeScreen ? elements.moodMessage : elements.shareStatus;
+async function shareSavedAnswers(clickedButton) {
+  const isCompleteScreen = !elements.completeScreen.classList.contains("hidden");
+
+  const statusTarget = isCompleteScreen
+    ? elements.shareStatus
+    : elements.moodMessage;
+
+  const button = clickedButton || elements.exportAllButton;
+  const originalButtonText = button.textContent;
+
   statusTarget.textContent = "";
-  showOnly(elements.sendingScreen);
-  elements.sendingStatus.textContent = "Создаю личный файл с сохранёнными ответами…";
+  button.disabled = true;
+  button.textContent = "Собираю ответы… 💌";
 
   try {
+    state.respondentName =
+      elements.respondentName.value.trim() || "Салима";
+
+    saveState();
+
     state.responseFile = await buildResponseFile();
-    if (navigator.canShare?.({ files: [state.responseFile] }) && navigator.share) {
-      await navigator.share({
-        files: [state.responseFile],
-        title: "Мои ответы для Бекназара",
-        text: "Я ответила на наши вопросы ♥",
-      });
-      statusTarget.textContent = "Файл отправлен через выбранное приложение ♥";
+
+    const shareData = {
+      files: [state.responseFile],
+      title: "Мои ответы для Бекназара",
+      text: "Я ответила на наши вопросы ♥"
+    };
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare(shareData)
+    ) {
+      await navigator.share(shareData);
+
+      statusTarget.textContent =
+        "Ответы отправлены через выбранное приложение ♥";
     } else {
       downloadFile(state.responseFile);
-      statusTarget.textContent = "Файл скачан. Отправь его Бекназару через Telegram или WhatsApp.";
+
+      statusTarget.textContent =
+        "Файл с ответами скачан. Теперь отправь его Бекназару через Telegram или WhatsApp ♥";
     }
   } catch (error) {
+    console.error("Ошибка отправки ответов:", error);
+
     if (error?.name === "AbortError") {
-      statusTarget.textContent = "Отправка отменена. Можно нажать кнопку ещё раз.";
+      statusTarget.textContent =
+        "Отправка отменена. Ответы сохранены, можно попробовать ещё раз.";
     } else {
-      console.error(error);
-      statusTarget.textContent = "Не удалось собрать файл. Проверь размер вложений и попробуй ещё раз.";
+      statusTarget.textContent =
+        `Не удалось создать файл: ${error?.message || "неизвестная ошибка"}`;
     }
   } finally {
-    showOnly(previousScreen);
+    button.disabled = false;
+    button.textContent = originalButtonText;
   }
 }
-
 function resetProgress() {
   const approved = window.confirm("Сбросить все сохранённые ответы и прогресс на этом устройстве?");
   if (!approved) return;
