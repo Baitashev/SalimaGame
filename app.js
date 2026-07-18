@@ -683,8 +683,12 @@ elements.backButton.addEventListener("click", () => {
 elements.exitCategoryButton.addEventListener("click", () => returnHome("Ответы сохранены. Возвращайся к этой теме в любой момент ♥"));
 elements.saveExitButton.addEventListener("click", () => returnHome("Черновик сохранён. Продолжить можно с первого неотвеченного вопроса."));
 elements.chooseAnotherButton.addEventListener("click", () => returnHome("Выбирай следующую тему по настроению."));
-elements.shareResponseButton.addEventListener("click", shareSavedAnswers);
-elements.exportAllButton.addEventListener("click", shareSavedAnswers);
+elements.shareResponseButton.addEventListener("click", (event) => {
+  shareSavedAnswers(event.currentTarget);
+});
+elements.exportAllButton.addEventListener("click", (event) => {
+  shareSavedAnswers(event.currentTarget);
+});
 elements.resetProgressButton.addEventListener("click", resetProgress);
 
 // Initial render
