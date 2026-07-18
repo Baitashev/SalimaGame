@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#24131a" />
+  <title>Наши ответы — админ-панель</title>
+  <link rel="icon" href="assets/heart.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="admin-page">
+  <main class="admin-shell">
+    <section id="adminLogin" class="login-card glass-card">
+      <a class="back-home" href="index.html">← На сайт</a>
+      <div class="love-seal" aria-hidden="true">♥</div>
+      <p class="eyebrow">Закрытое пространство</p>
+      <h1>Вход в админ-панель</h1>
+      <p>Импортируй файл, который пришлёт Салима. Ответы сохранятся только в браузере на этом устройстве.</p>
+      <form id="loginForm" class="login-form">
+        <label><span>Пароль</span><input id="adminPassword" type="password" autocomplete="current-password" placeholder="••••••••" required /></label>
+        <button class="primary-button" type="submit">Войти</button>
+        <p id="loginError" class="validation-message" role="alert"></p>
+      </form>
+    </section>
+
+    <section id="adminDashboard" class="dashboard hidden">
+      <header class="dashboard-header glass-card">
+        <div><p class="eyebrow">Личный дневник ответов</p><h1>Панель Бекназара</h1></div>
+        <div class="dashboard-actions">
+          <input id="importInput" type="file" accept=".love,.json,application/json" multiple hidden />
+          <button id="importButton" class="primary-button" type="button">Импортировать ответы</button>
+          <button id="logoutButton" class="secondary-button" type="button">Выйти</button>
+        </div>
+      </header>
+
+      <p id="adminNotice" class="admin-notice glass-card hidden" role="status"></p>
+
+      <section class="stats-grid">
+        <article class="stat-card glass-card"><span>Получено файлов</span><strong id="responseCount">0</strong></article>
+        <article class="stat-card glass-card"><span>Ответов</span><strong id="answerCount">0</strong></article>
+        <article class="stat-card glass-card"><span>Пройдено категорий</span><strong id="categoryCount">0</strong></article>
+        <article class="stat-card glass-card"><span>Вложений</span><strong id="fileCount">0</strong></article>
+      </section>
+
+      <section class="responses-layout">
+        <aside class="responses-list-panel glass-card">
+          <div class="panel-heading"><p class="eyebrow">Все импорты</p><h2>Ответы</h2></div>
+          <div id="responsesList" class="responses-list"></div>
+          <p id="emptyResponses" class="empty-state">Нажми «Импортировать ответы» и выбери файл формата .love ♥</p>
+        </aside>
+
+        <section class="response-detail-panel glass-card">
+          <div id="responsePlaceholder" class="empty-state detail-placeholder">
+            <div class="question-emoji">💌</div><h2>Выбери файл ответов</h2><p>Здесь появятся ответы, сгруппированные по категориям.</p>
+          </div>
+          <div id="responseDetail" class="hidden">
+            <div class="detail-header">
+              <div><p id="detailDate" class="eyebrow"></p><h2 id="detailTitle">Ответы любимой</h2></div>
+              <button id="deleteResponseButton" class="danger-button" type="button">Удалить</button>
+            </div>
+            <div id="responseSummary" class="response-summary"></div>
+            <div id="answersContainer" class="answers-container"></div>
+            <section id="filesSection" class="files-section hidden"><h3>Прикреплённые файлы</h3><div id="filesContainer" class="files-grid"></div></section>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

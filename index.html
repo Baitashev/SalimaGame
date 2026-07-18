@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4f1730" />
+  <meta name="description" content="Романтическая мини-игра для Салимы: вопросы о любви, мечтах, повседневности и близости." />
+  <title>Наше место ❤️</title>
+  <link rel="icon" href="assets/heart.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="client-page">
+  <div class="photo-backdrop" aria-hidden="true">
+    <div id="photoLayerA" class="photo-layer photo-layer-a"></div>
+    <div id="photoLayerB" class="photo-layer photo-layer-b"></div>
+    <div class="photo-overlay"></div>
+  </div>
+  <div id="floatingHearts" class="floating-hearts" aria-hidden="true"></div>
+
+  <aside class="memory-rail memory-rail-left" aria-hidden="true">
+    <figure class="memory-polaroid tilt-left"><img id="railPhotoOne" alt="" /><figcaption>Ты — моё любимое воспоминание</figcaption></figure>
+    <figure class="memory-polaroid tilt-right"><img id="railPhotoTwo" alt="" /><figcaption>И мой любимый человек</figcaption></figure>
+  </aside>
+  <aside class="memory-rail memory-rail-right" aria-hidden="true">
+    <figure class="memory-polaroid tilt-right"><img id="railPhotoThree" alt="" /><figcaption>С тобой уютно даже молчать</figcaption></figure>
+    <figure class="memory-polaroid tilt-left"><img id="railPhotoFour" alt="" /><figcaption>С любовью, твой Бекназар ♥</figcaption></figure>
+  </aside>
+
+  <main class="app-shell">
+    <section id="homeScreen" class="home-screen">
+      <header class="hero-card glass-card">
+        <div class="love-seal" aria-hidden="true">♥</div>
+        <p class="eyebrow">Место, куда можно прийти с любым настроением</p>
+        <h1>Салима, давай каждый раз узнавать друг друга заново</h1>
+        <p class="hero-copy">
+          Здесь нет одной длинной обязательной анкеты. Выбирай настроение или любую тему,
+          проходи маленькую игру и возвращайся, когда тебе скучно, грустно или просто хочется почувствовать нас ближе.
+        </p>
+
+        <div class="name-row">
+          <label for="respondentName">Как тебя сегодня называть?</label>
+          <input id="respondentName" class="text-input" type="text" maxlength="80" value="Салима" placeholder="Твоя Салима…" />
+        </div>
+
+        <div class="mood-panel">
+          <p>Что тебе сейчас нужно?</p>
+          <div class="mood-buttons">
+            <button class="mood-button" type="button" data-mood="sad"><span>🥺</span><strong>Мне грустно</strong><small>Тёплые и поддерживающие вопросы</small></button>
+            <button class="mood-button" type="button" data-mood="bored"><span>😄</span><strong>Мне скучно</strong><small>Весёлое случайное приключение</small></button>
+            <button class="mood-button" type="button" data-mood="close"><span>🫂</span><strong>Хочу стать ближе</strong><small>Чувства, доверие и нежность</small></button>
+            <button class="mood-button" type="button" data-mood="random"><span>🎲</span><strong>Удиви меня</strong><small>Случайная категория</small></button>
+          </div>
+          <p id="moodMessage" class="mood-message" aria-live="polite"></p>
+        </div>
+      </header>
+
+      <section class="quote-strip glass-card" aria-live="polite">
+        <span aria-hidden="true">“</span>
+        <p id="loveQuote"></p>
+        <button id="nextQuoteButton" class="icon-button" type="button" aria-label="Показать следующую фразу">→</button>
+      </section>
+
+      <section class="categories-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">202 вопроса • 16 тем</p>
+            <h2>Выбери категорию</h2>
+          </div>
+          <div class="home-actions">
+            <button id="exportAllButton" class="secondary-button" type="button">Отправить сохранённые ответы 💌</button>
+            <button id="resetProgressButton" class="ghost-button" type="button">Сбросить прогресс</button>
+          </div>
+        </div>
+        <div id="categoriesGrid" class="categories-grid"></div>
+      </section>
+    </section>
+
+    <section id="gameScreen" class="game-screen hidden" aria-live="polite">
+      <header class="game-header glass-card">
+        <button id="exitCategoryButton" class="ghost-button light" type="button">← Категории</button>
+        <div class="game-title-wrap">
+          <p id="categoryEyebrow" class="eyebrow"></p>
+          <h2 id="categoryTitle"></h2>
+        </div>
+        <div class="progress-copy"><span id="currentQuestionNumber">1</span>/<span id="totalQuestionCount">1</span></div>
+      </header>
+
+      <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+
+      <form id="questionForm" class="question-card glass-card" novalidate>
+        <div id="questionEmoji" class="question-emoji" aria-hidden="true">💗</div>
+        <p id="questionKind" class="question-kind"></p>
+        <h3 id="questionTitle"></h3>
+        <p id="questionHint" class="question-hint"></p>
+        <div id="answerArea" class="answer-area"></div>
+        <p id="validationMessage" class="validation-message" role="alert"></p>
+      </form>
+
+      <nav class="question-navigation" aria-label="Навигация по вопросам">
+        <button id="backButton" class="secondary-button" type="button">← Назад</button>
+        <button id="saveExitButton" class="ghost-button" type="button">Сохранить и выйти</button>
+        <button id="nextButton" class="primary-button" type="button">Дальше →</button>
+      </nav>
+    </section>
+
+    <section id="completeScreen" class="complete-screen glass-card hidden">
+      <div class="final-heart" aria-hidden="true">♥</div>
+      <p class="eyebrow">Ещё одна маленькая глава о нас</p>
+      <h2 id="completeTitle">Категория пройдена</h2>
+      <p id="completeCopy"></p>
+      <div id="completeQuote" class="final-message"></div>
+      <div class="complete-actions">
+        <button id="shareResponseButton" class="primary-button pulse-button" type="button">Отправить ответы Бекназару 💌</button>
+        <button id="chooseAnotherButton" class="secondary-button" type="button">Выбрать другую тему</button>
+      </div>
+      <p id="shareStatus" class="privacy-note"></p>
+    </section>
+
+    <section id="sendingScreen" class="sending-screen glass-card hidden">
+      <div class="loader-heart">♥</div>
+      <h2>Бережно собираю ответы…</h2>
+      <p id="sendingStatus">Создаю один личный файл.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">Наше маленькое место • <a href="admin.html" aria-label="Вход в админ-панель">♥</a></footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
