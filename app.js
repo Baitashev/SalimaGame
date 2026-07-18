@@ -610,12 +610,17 @@ async function buildResponseFile() {
 function downloadFile(file) {
   const url = URL.createObjectURL(file);
   const link = document.createElement("a");
+
   link.href = url;
   link.download = file.name;
+
   document.body.append(link);
   link.click();
   link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 2000);
 }
 
 async function shareSavedAnswers(clickedButton) {
