@@ -689,7 +689,7 @@ async function shareSavedAnswers(clickedButton) {
       downloadFile(state.responseFile);
 
       statusTarget.textContent =
-        "Файл с ответами скачан ♥ Отправь его Бекназару через Telegram или WhatsApp.";
+        "Файл с ответами скачан ♥ Отправь его Любимому через Telegram или WhatsApp.";
     }
   } catch (error) {
     console.error("Ошибка создания файла с ответами:", error);
